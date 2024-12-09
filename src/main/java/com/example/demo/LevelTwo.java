@@ -40,4 +40,23 @@ public class LevelTwo extends LevelParent {
 		return levelView;
 	}
 
+	@Override
+	protected void goToLevel(String levelName) {
+		// Handle level transition logic
+		try {
+			System.out.println("Attempting to transition to level: " + levelName);
+
+			// Instantiate the next level dynamically using reflection
+			LevelParent nextLevel = (LevelParent) Class.forName(levelName)
+					.getConstructor(double.class, double.class)
+					.newInstance(getRoot().getScene().getHeight(), getRoot().getScene().getWidth());
+			
+			// Replace the current scene with the new level's scene
+			getRoot().getScene().setRoot(nextLevel.initializeScene().getRoot());
+			nextLevel.startGame();
+		} catch (Exception e) {
+			System.err.println("Failed to transition to level: " + levelName);
+			e.printStackTrace();
+		}
+	}
 }

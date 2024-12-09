@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javafx.animation.*;
+import javafx.beans.property.StringProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -11,7 +13,7 @@ import javafx.scene.image.*;
 import javafx.scene.input.*;
 import javafx.util.Duration;
 
-public abstract class LevelParent extends Observable {
+public abstract class LevelParent {
 
 	private static final double SCREEN_HEIGHT_ADJUSTMENT = 150;
 	private static final int MILLISECOND_DELAY = 50;
@@ -32,6 +34,10 @@ public abstract class LevelParent extends Observable {
 	
 	private int currentNumberOfEnemies;
 	private LevelView levelView;
+	
+	// Using StringProperty to replace Observable for level name change
+    private final StringProperty levelName = new SimpleStringProperty();
+
 
 	public LevelParent(String backgroundImageName, double screenHeight, double screenWidth, int playerInitialHealth) {
 		this.root = new Group();
@@ -51,6 +57,13 @@ public abstract class LevelParent extends Observable {
 		this.currentNumberOfEnemies = 0;
 		initializeTimeline();
 		friendlyUnits.add(user);
+		
+		 // Listener for level transitions
+        levelName.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && !newValue.isEmpty()) {
+                goToLevel(newValue);
+            }
+        });
 	}
 
 	protected abstract void initializeFriendlyUnits();
@@ -73,10 +86,14 @@ public abstract class LevelParent extends Observable {
 		timeline.play();
 	}
 
+	// Set the level name which triggers the listener to transition to the next level
 	public void goToNextLevel(String levelName) {
-		setChanged();
-		notifyObservers(levelName);
+		this.levelName.set(levelName);  // Set the new levelName, triggering the listener
 	}
+	
+	public StringProperty levelNameProperty() {
+        return levelName;
+    }
 
 	private void updateScene() {
 		spawnEnemyUnits();
@@ -247,5 +264,8 @@ public abstract class LevelParent extends Observable {
 	private void updateNumberOfEnemies() {
 		currentNumberOfEnemies = enemyUnits.size();
 	}
+	
+	 // Abstract method to handle level transition
+    protected abstract void goToLevel(String levelName);
 
 }

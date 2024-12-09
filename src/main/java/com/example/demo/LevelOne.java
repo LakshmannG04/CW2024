@@ -48,4 +48,27 @@ public class LevelOne extends LevelParent {
 		return getUser().getNumberOfKills() >= KILLS_TO_ADVANCE;
 	}
 
+	@Override
+	protected void goToLevel(String levelName) {
+		// Handle level transition logic
+		try {
+			if (levelName.equals(NEXT_LEVEL)) {
+				System.out.println("Transitioning to Level Two...");
+				// Logic for transitioning to the next level
+				// For example, instantiate the next level class dynamically
+				LevelParent nextLevel = (LevelParent) Class.forName(levelName)
+					.getConstructor(double.class, double.class)
+					.newInstance(getRoot().getScene().getHeight(), getRoot().getScene().getWidth());
+				
+				// Replace current scene with the new level's scene
+				getRoot().getScene().setRoot(nextLevel.initializeScene().getRoot());
+				nextLevel.startGame();
+			} else {
+				System.out.println("Unknown level: " + levelName);
+			}
+		} catch (Exception e) {
+			System.err.println("Failed to transition to level: " + levelName);
+			e.printStackTrace();
+		}
+	}
 }
