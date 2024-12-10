@@ -31,9 +31,9 @@ public class LevelOne extends LevelParent {
 	protected void spawnEnemyUnits() {
 		int currentNumberOfEnemies = getCurrentNumberOfEnemies();
 		for (int i = 0; i < TOTAL_ENEMIES - currentNumberOfEnemies; i++) {
-			if (Math.random() < ENEMY_SPAWN_PROBABILITY) {
+			if (Math.random() < getSpawnProbability()) {
 				double newEnemyInitialYPosition = Math.random() * getEnemyMaximumYPosition();
-				ActiveActorDestructible newEnemy = new EnemyPlane(getScreenWidth(), newEnemyInitialYPosition);
+				ActiveActorDestructible newEnemy = new EnemyPlane(getScreenWidth(), newEnemyInitialYPosition, getDifficultyFactor());
 				addEnemyUnit(newEnemy);
 			}
 		}
@@ -45,8 +45,12 @@ public class LevelOne extends LevelParent {
 	}
 
 	private boolean userHasReachedKillTarget() {
-		return getUser().getNumberOfKills() >= KILLS_TO_ADVANCE;
+		return getUser().getTotalKills() >= KILLS_TO_ADVANCE;
 	}
+	
+	 private double getSpawnProbability() {
+	        return BASE_ENEMY_SPAWN_PROBABILITY * getDifficultyFactor();
+	    }
 
 	@Override
 	protected void goToLevel(String levelName) {

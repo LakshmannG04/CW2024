@@ -17,6 +17,8 @@ public abstract class LevelParent {
 
 	private static final double SCREEN_HEIGHT_ADJUSTMENT = 150;
 	private static final int MILLISECOND_DELAY = 50;
+	protected static final double BASE_FIRE_RATE = 0.01; // Default base fire rate
+	protected static final double BASE_ENEMY_SPAWN_PROBABILITY = 0.2; // Default spawn probability
 	private final double screenHeight;
 	private final double screenWidth;
 	private final double enemyMaximumYPosition;
@@ -34,6 +36,9 @@ public abstract class LevelParent {
 	
 	private int currentNumberOfEnemies;
 	private LevelView levelView;
+	
+	private double difficultyFactor = 1.0; // New: Scaling difficulty factor
+    private int killsSinceLastIncrement = 0; // New: Track kills for difficulty scaling
 	
 	// Using StringProperty to replace Observable for level name change
     private final StringProperty levelName = new SimpleStringProperty();
@@ -96,6 +101,7 @@ public abstract class LevelParent {
     }
 
 	private void updateScene() {
+		increaseDifficulty(); // New: Adjust difficulty dynamically
 		spawnEnemyUnits();
 		updateActors();
 		generateEnemyFire();
@@ -169,9 +175,8 @@ public abstract class LevelParent {
 	}
 
 	private void removeDestroyedActors(List<ActiveActorDestructible> actors) {
-		List<ActiveActorDestructible> destroyedActors = actors.stream().filter(actor -> actor.isDestroyed())
-				.collect(Collectors.toList());
-		root.getChildren().removeAll(destroyedActors);
+		List<ActiveActorDestructible> destroyedActors = actors.stream().filter(ActiveActorDestructible::isDestroyed).toList();
+        root.getChildren().removeAll(destroyedActors);
 		actors.removeAll(destroyedActors);
 	}
 
@@ -221,6 +226,14 @@ public abstract class LevelParent {
 	private boolean enemyHasPenetratedDefenses(ActiveActorDestructible enemy) {
 		return Math.abs(enemy.getTranslateX()) > screenWidth;
 	}
+	
+	private void increaseDifficulty() {
+        killsSinceLastIncrement += user.getKillCountSinceLastReset();
+        if (killsSinceLastIncrement >= 10) { // Increase difficulty every 10 kills
+            killsSinceLastIncrement = 0;
+            difficultyFactor += 0.1; // Increment difficulty factor
+        }
+    }
 
 	protected void winGame() {
 		timeline.stop();
@@ -256,6 +269,10 @@ public abstract class LevelParent {
 	protected double getScreenWidth() {
 		return screenWidth;
 	}
+	
+	 protected double getDifficultyFactor() {
+	        return difficultyFactor;
+    }
 
 	protected boolean userIsDestroyed() {
 		return user.isDestroyed();

@@ -11,9 +11,11 @@ public class UserPlane extends FighterPlane {
 	private static final int VERTICAL_VELOCITY = 8;
 	private static final int PROJECTILE_X_POSITION = 110;
 	private static final int PROJECTILE_Y_POSITION_OFFSET = 20;
+	
 	private int velocityMultiplier;
-	private int numberOfKills;
-
+	private int totalKills; // Tracks total kills
+    private int killsSinceLastReset; // Tracks kills since the last difficulty increment
+    
 	public UserPlane(int initialHealth) {
 		super(IMAGE_NAME, IMAGE_HEIGHT, INITIAL_X_POSITION, INITIAL_Y_POSITION, initialHealth);
 		velocityMultiplier = 0;
@@ -57,12 +59,24 @@ public class UserPlane extends FighterPlane {
 		velocityMultiplier = 0;
 	}
 
-	public int getNumberOfKills() {
-		return numberOfKills;
-	}
+	// Tracks total kills made by the user
+    public int getTotalKills() {
+        return totalKills;
+    }
 
-	public void incrementKillCount() {
-		numberOfKills++;
-	}
+    // Tracks kills since the last difficulty increment
+    public int getKillCountSinceLastReset() {
+        return killsSinceLastReset;
+    }
 
+    // Increments both total kills and kills since last reset
+    public void incrementKillCount() {
+        totalKills++;
+        killsSinceLastReset++;
+    }
+
+    // Resets the kill counter since the last difficulty increment
+    public void resetKillCountSinceLastReset() {
+        killsSinceLastReset = 0;
+    }
 }

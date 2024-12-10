@@ -8,11 +8,18 @@ public class EnemyPlane extends FighterPlane {
 	private static final double PROJECTILE_X_POSITION_OFFSET = -100.0;
 	private static final double PROJECTILE_Y_POSITION_OFFSET = 50.0;
 	private static final int INITIAL_HEALTH = 1;
-	private static final double FIRE_RATE = .01;
-
-	public EnemyPlane(double initialXPos, double initialYPos) {
-		super(IMAGE_NAME, IMAGE_HEIGHT, initialXPos, initialYPos, INITIAL_HEALTH);
-	}
+	private static final double BASE_FIRE_RATE = .01;
+	
+	private final double difficultyFactor;
+	
+	public EnemyPlane(double initialXPos, double initialYPos, double difficultyFactor) {
+        super(IMAGE_NAME, IMAGE_HEIGHT, initialXPos, initialYPos, (int) (INITIAL_HEALTH * difficultyFactor));
+        this.difficultyFactor = difficultyFactor; // Initialize final field
+    }
+	 
+	 public double getDifficultyFactor() {
+	        return difficultyFactor; // Add a getter for difficultyFactor
+	    }
 
 	@Override
 	public void updatePosition() {
@@ -21,7 +28,8 @@ public class EnemyPlane extends FighterPlane {
 
 	@Override
 	public ActiveActorDestructible fireProjectile() {
-		if (Math.random() < FIRE_RATE) {
+		double adjustedFireRate = BASE_FIRE_RATE * getDifficultyFactor();
+		if (Math.random() < adjustedFireRate) {
 			double projectileXPosition = getProjectileXPosition(PROJECTILE_X_POSITION_OFFSET);
 			double projectileYPostion = getProjectileYPosition(PROJECTILE_Y_POSITION_OFFSET);
 			return new EnemyProjectile(projectileXPosition, projectileYPostion);
