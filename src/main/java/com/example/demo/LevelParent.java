@@ -131,6 +131,8 @@ public abstract class LevelParent {
 				KeyCode kc = e.getCode();
 				if (kc == KeyCode.UP) user.moveUp();
 				if (kc == KeyCode.DOWN) user.moveDown();
+				if (kc == KeyCode.LEFT) user.moveLeft(); // Added
+	            if (kc == KeyCode.RIGHT) user.moveRight(); // Added
 				if (kc == KeyCode.SPACE) fireProjectile();
 			}
 		});
@@ -138,6 +140,7 @@ public abstract class LevelParent {
 			public void handle(KeyEvent e) {
 				KeyCode kc = e.getCode();
 				if (kc == KeyCode.UP || kc == KeyCode.DOWN) user.stop();
+				if (kc == KeyCode.LEFT || kc == KeyCode.RIGHT) user.stopHorizontalMovement(); // Added
 			}
 		});
 		root.getChildren().add(background);
