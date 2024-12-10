@@ -191,7 +191,7 @@ public abstract class LevelParent {
 	}
 
 	private void removeDestroyedActors(List<ActiveActorDestructible> actors) {
-		List<ActiveActorDestructible> destroyedActors = actors.stream().filter(ActiveActorDestructible::isDestroyed).toList();
+		List<ActiveActorDestructible> destroyedActors = actors.stream().filter(ActiveActorDestructible::isDestroyed).collect(Collectors.toList());
         root.getChildren().removeAll(destroyedActors);
 		actors.removeAll(destroyedActors);
 	}
