@@ -28,6 +28,7 @@ public abstract class LevelParent {
 	private final UserPlane user;
 	private final Scene scene;
 	private final ImageView background;
+	private final Timeline autoFireTimeline; // New: Timeline for automatic firing
 
 	private final List<ActiveActorDestructible> friendlyUnits;
 	private final List<ActiveActorDestructible> enemyUnits;
@@ -48,6 +49,7 @@ public abstract class LevelParent {
 		this.root = new Group();
 		this.scene = new Scene(root, screenWidth, screenHeight);
 		this.timeline = new Timeline();
+		this.autoFireTimeline = new Timeline(); // Initialize auto-fire timeline
 		this.user = new UserPlane(playerInitialHealth);
 		this.friendlyUnits = new ArrayList<>();
 		this.enemyUnits = new ArrayList<>();
@@ -61,6 +63,7 @@ public abstract class LevelParent {
 		this.levelView = instantiateLevelView();
 		this.currentNumberOfEnemies = 0;
 		initializeTimeline();
+		initializeAutoFire(); // Initialize automatic firing
 		friendlyUnits.add(user);
 		
 		 // Listener for level transitions
@@ -116,6 +119,14 @@ public abstract class LevelParent {
 		checkIfGameOver();
 	}
 
+	// New: Initialize the auto-fire timeline
+	private void initializeAutoFire() {
+	    autoFireTimeline.setCycleCount(Timeline.INDEFINITE);
+	    KeyFrame autoFireFrame = new KeyFrame(Duration.millis(500), e -> fireProjectile());
+	    autoFireTimeline.getKeyFrames().add(autoFireFrame);
+	    autoFireTimeline.play(); // Start auto-firing
+	}
+	
 	private void initializeTimeline() {
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		KeyFrame gameLoop = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> updateScene());
@@ -133,7 +144,7 @@ public abstract class LevelParent {
 				if (kc == KeyCode.DOWN) user.moveDown();
 				if (kc == KeyCode.LEFT) user.moveLeft(); // Added
 	            if (kc == KeyCode.RIGHT) user.moveRight(); // Added
-				if (kc == KeyCode.SPACE) fireProjectile();
+				
 			}
 		});
 		background.setOnKeyReleased(new EventHandler<KeyEvent>() {
@@ -148,8 +159,10 @@ public abstract class LevelParent {
 
 	private void fireProjectile() {
 		ActiveActorDestructible projectile = user.fireProjectile();
-		root.getChildren().add(projectile);
-		userProjectiles.add(projectile);
+	    if (projectile != null) {
+	        root.getChildren().add(projectile);
+	        userProjectiles.add(projectile);
+	    }
 	}
 
 	private void generateEnemyFire() {
