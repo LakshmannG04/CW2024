@@ -49,7 +49,7 @@ public class LevelOne extends LevelParent {
 	}
 	
 	 private double getSpawnProbability() {
-	        return BASE_ENEMY_SPAWN_PROBABILITY * getDifficultyFactor();
+		 return ENEMY_SPAWN_PROBABILITY * getDifficultyFactor();
 	    }
 
 	@Override
