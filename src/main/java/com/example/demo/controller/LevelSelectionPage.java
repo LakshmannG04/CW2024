@@ -30,13 +30,15 @@ public class LevelSelectionPage {
         // Buttons for level selection
         Button level1Button = createLevelButton("Level 1");
         Button level2Button = createLevelButton("Level 2");
+        Button level3Button = createLevelButton("Level 3");
 
         // Button actions
         level1Button.setOnAction(e -> startLevel("com.example.demo.LevelOne"));
         level2Button.setOnAction(e -> startLevel("com.example.demo.LevelTwo"));
+        level3Button.setOnAction(e -> startLevel("com.example.demo.LevelThree"));
 
         // Layout configuration
-        VBox layout = new VBox(20, level1Button, level2Button);
+        VBox layout = new VBox(20, level1Button, level2Button, level3Button);
         layout.setStyle("-fx-alignment: center;");
         StackPane root = new StackPane(background, layout);
 
